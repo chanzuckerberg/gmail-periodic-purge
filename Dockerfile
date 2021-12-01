@@ -1,6 +1,8 @@
 # Python image to use.
 FROM python:3.8-slim
 
+ARG PORT=8080
+
 # Set the working directory to /app
 WORKDIR /app
 
@@ -14,4 +16,4 @@ RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 COPY . .
 
 # Run app.py when the container launches
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+CMD [ "python3", "app.py"]
