@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  	<link href="https://chanzuckerberg.com/wp-content/uploads/2018/04/new-logo.png?w=32" rel="icon" type="image/png" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  	<link href="/static/style.css" rel="stylesheet" type="text/css" />
+
+    <title>Mail Purge</title>
+  </head>
+  <body class="bg-light">
+
+
+    <div class="container">
+      <div class="py-5">
+        <img class="float-right" src="https://chanzuckerberg.com/wp-content/themes/czi/img/logo.svg" alt="Chan Zuckerberg Initiative logo" height="72">
+        <h2>Mail Purge Settings</h2>
+        <p class="lead">These settings allow you to fine tune the runtime settings for mail purge.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 order-md-1">
+
+          <form class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+            <h4 class="mb-3">General Settings</h4>
+
+            <div class="mb-3">
+              <label for="general_default_retention">Global Default Retention (days)</label>
+              <input type="number" class="form-control" id="general_default_retention" name="general_default_retention" placeholder="Retention default (days)" value="{{config.DEFAULT_RETENTION_DAYS or ''}}" required>
+              <div class="invalid-feedback">
+                  Field is required.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="general_healthy_deletion_threshold">24 Hour Healthy Deletion Threshold</label>
+              <input type="number" class="form-control" id="general_healthy_deletion_threshold" name="general_healthy_deletion_threshold" placeholder="Count of minimum deletions per day" value="{{ config.HEALTHY_DELETIONS_THRESHOLD_PER_DAY or '' }}" required>
+              <div class="invalid-feedback">
+                  Field is required.
+              </div>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="general_bigquery_table_name">BigQuery Table Name</label>
+              <input type="text" class="form-control" id="general_bigquery_table_name" name="general_bigquery_table_name" placeholder="project.dataset.tablename" value="{{config.BIGQUERY_TABLE_NAME or ''}}" required>
+              <div class="invalid-feedback">
+                  Field is required.
+              </div>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="general_workspace_admin">Workspace Admin</label>
+              <input type="email" class="form-control" id="general_workspace_admin" name="general_workspace_admin" placeholder="admin_user@domain.com" value="{{config.ADMIN_USER or ''}}" required>
+              <div class="invalid-feedback">
+                  Field is required.
+              </div>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="general_user_scope">User Scope</label>
+              <textarea rows="3" class="form-control" id="general_user_scope" name="general_user_scope"  placeholder="Enter 'all' to run across all users in the domain, otherwise comma or line delimited list of email addresses." required>{{ config.USER_SCOPE|join('\n') or "all" }}</textarea>
+              <div class="invalid-feedback">
+                  Field is required. Enter 'all' to run across all users in the domain.
+              </div>
+            </div>
+
+            <div class="mb-3">
+
+              <div class="custom-control custom-radio">
+                <input id="commit_enabled_off" name="general_commit_enabled" type="radio" class="custom-control-input" value="off" {{ "checked" if not config.COMMIT else "" }} required>
+                <label class="custom-control-label" for="commit_enabled_off">Dry Run</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="commit_enabled_on" name="general_commit_enabled" type="radio" class="custom-control-input"  value="on" {{ "checked" if config.COMMIT else "" }} required>
+                <label class="custom-control-label" for="commit_enabled_on">Commit</label>
+              </div>
+            </div>
+
+
+
+            <h4 class="mb-3">Retention Overrides by Org Unit</h4>
+            {% if config.ADMIN_USER %}
+            {% for ou in ou_map.values()|sort(attribute='orgUnitPath') %}
+            <div class="mb-3">
+              {% set field_prefix='ou_override__{}'.format(ou.orgUnitId)  %}
+              <div class="input-group">
+                <div class="input-group-append">
+                  <label for="{{ field_prefix }}" class="input-group-text">{{ ou.orgUnitPath }}</label>
+                </div>
+                <input type="number" class="form-control" id="{{ field_prefix }}" name="{{ field_prefix }}" value="{{ config.RETENTION_OVERRIDES_BY_OU_ID[ou.orgUnitId] or '' }}" placeholder="Retention (days)">
+              </div>
+            </div>
+            {% endfor %}
+            {% else %}
+              <label>You must configure your Workspace Admin before you can set OU-specific overrides.</label>
+            {% endif %}
+
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Save Settings</button>
+          </form>
+        </div>
+      </div>
+
+      <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2021 The Chan Zuckerberg Initiative</p>
+      </footer>
+    </div>
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!--  <script>-->
+<!--      // disable form submissions if there are invalid fields-->
+<!--      (function() {-->
+<!--        'use strict';-->
+
+<!--        window.addEventListener('load', function() {-->
+<!--          // Fetch all the forms we want to apply custom Bootstrap validation styles to-->
+<!--          var forms = document.getElementsByClassName('needs-validation');-->
+
+<!--          // Loop over them and prevent submission-->
+<!--          var validation = Array.prototype.filter.call(forms, function(form) {-->
+<!--            form.addEventListener('submit', function(event) {-->
+<!--              if (form.checkValidity() === false) {-->
+<!--                event.preventDefault();-->
+<!--                event.stopPropagation();-->
+<!--              }-->
+<!--              form.classList.add('was-validated');-->
+<!--            }, false);-->
+<!--          });-->
+<!--        }, false);-->
+<!--      })();-->
+<!--    </script>-->
+  </body>
+</html>
