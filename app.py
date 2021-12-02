@@ -17,6 +17,10 @@ import custom_logging
 app = Flask(__name__)
 LOG = custom_logging.add_json_log_streaming(logging.getLogger(__name__))
 
+@app.route('/health', methods=['GET'])
+def health():
+    return 'Up and running!'
+
 @app.route('/', methods=['GET', 'POST'])
 def settings():
     """This app only has a single page, which is the settings page."""
