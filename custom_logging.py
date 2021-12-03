@@ -3,6 +3,10 @@ import sys
 import json
 import traceback
 
+# init
+logging.basicConfig()
+logging.root.setLevel(logging.NOTSET)
+
 # reduce verbosity of certain noisy logs
 logging.getLogger("oauth2client").setLevel(logging.ERROR)  # too verbose.
 logging.getLogger("googleapiclient").setLevel(logging.ERROR)  # too verbose.

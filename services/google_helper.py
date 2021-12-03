@@ -7,9 +7,10 @@ import os
 from google.cloud import secretmanager
 import functools
 import json
+import custom_logging
 
 DEFAULT_GOOGLE_API_NUM_RETRIES = 3
-LOG = logging.getLogger(__name__)
+LOG = custom_logging.add_json_log_streaming(logging.getLogger(__name__))
 
 
 @functools.lru_cache(maxsize=1)
@@ -132,7 +133,7 @@ def list_emails_older_than(svc, older_than_days):
     emails = []
     page_token = None
     upper_date = date.today() - timedelta(days=older_than_days+1)
-    message_query = 'before:{}'.format(upper_date.strftime('%Y/%m/%d'))
+    message_query = '-in:chats before:{}'.format(upper_date.strftime('%Y/%m/%d'))
     while True:
         results = svc.users().messages().list(pageToken=page_token, userId='me', q=message_query, maxResults=500).execute(num_retries=DEFAULT_GOOGLE_API_NUM_RETRIES)
         emails.extend(results.get('messages', []))

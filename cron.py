@@ -88,7 +88,8 @@ def process_all_users_mail_purge():
     LOG.debug(f'{log_line_prefix}Fetching metadata about domain', extra=log_context)
     org_svc = google_helper.build_service_org_directory(config['ADMIN_USER'])
     org_users = google_helper.list_users(org_svc)
-    org_units = google_helper.list_org_units(org_svc)  # maps OU path > OU object
+    org_units = google_helper.list_org_units(org_svc)  # maps OU ID > OU object
+    org_units_by_path = { o['orgUnitPath']:o for o in org_units.values() }  # maps OU Path > OU object
 
     # determine if we should be looking at a filtered set of users, based on config
     if 'all' in config['USER_SCOPE']:
@@ -105,7 +106,7 @@ def process_all_users_mail_purge():
         LOG.debug(f'{log_line_prefix}[{idx} of {len(org_users)}] Processing user with metadata {user}', extra=log_context)
         user_ou_path = user['orgUnitPath']
         user_email = user['primaryEmail']
-        user_ou_id = org_units.get(user_ou_path, {}).get('orgUnitId')
+        user_ou_id = org_units_by_path.get(user_ou_path, {}).get('orgUnitId')
 
         # find retention period for user
         user_retention_days = config['RETENTION_OVERRIDES_BY_OU_ID'].get(user_ou_id, config['DEFAULT_RETENTION_DAYS'])

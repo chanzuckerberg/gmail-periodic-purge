@@ -1,5 +1,5 @@
 """
-
+Main entrypoint for app. Because of the small footprint, it contains all routes.
 """
 import os
 from flask import Flask, render_template, request
@@ -18,13 +18,16 @@ import cron
 app = Flask(__name__)
 LOG = custom_logging.add_json_log_streaming(logging.getLogger(__name__))
 
+
 @app.route('/health', methods=['GET'])
 def health():
     return 'Up and running!'
 
+
 @app.route('/cron/daily', methods=['GET'])
 def cron_daily():
     cron.process_all_users_mail_purge()
+    cron.healthcheck()
     return 'ok'
 
 
