@@ -12,6 +12,7 @@ from pprint import pprint
 import sys
 import re
 import custom_logging
+import cron
 
 # pylint: disable=C0103
 app = Flask(__name__)
@@ -20,6 +21,13 @@ LOG = custom_logging.add_json_log_streaming(logging.getLogger(__name__))
 @app.route('/health', methods=['GET'])
 def health():
     return 'Up and running!'
+
+@app.route('/cron/daily', methods=['GET'])
+def cron_daily():
+    print("Testing cron")
+    # cron.process_all_users_mail_purge()
+    return 'ok'
+
 
 @app.route('/', methods=['GET', 'POST'])
 def settings():

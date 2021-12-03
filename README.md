@@ -1,7 +1,7 @@
 ## Setup
 1. Create GCP project
 2. Create service account in GCP project.
-3. Enable Gmail and Admin SDK in GCP project
+3. Enable Gmail, Admin SDK, and App Engine Admin API in GCP project
 4. Give service account address BigQuery Editor, BigQuery Job User and Firebase access in GCP IAM.
 5. Give client ID for service account access to the following scopes under Domain Wide Delegation in the Workspace Admin panel:
     ```
@@ -19,24 +19,8 @@
     ```
 8. Enable Datastore in Native mode with collection `GLOBAL` and blank object with doc ID `CONFIG` 
 9. In IAM, give the AppEngine default service account Secret Manager Secret Accessor perms
-10. Create Cloud Build Trigger using Github, Branch=^master$, and Build Type=Dockerfile)
+10. Create Cloud Build Trigger using Github, Branch=^master$, Build Type=CloudBuild, location=`/triggers/cloudbuild.yaml`)
 
-[//]: # ()
-[//]: # (10. Deploy to Cloud Run)
-
-[//]: # (    - Create a Cloud Run Service)
-
-[//]: # (    - "Set up with Cloud Build" using Github, Branch=^master$, and Build Type=Dockerfile)
-
-[//]: # (    - Cap Autoscaling to 2 instances)
-
-[//]: # (    - Under Advanced Settings > Security, set the service account to the one created above.)
-
-[//]: # (    - Allow internal traffic and traffic from Cloud Load Balancing)
-
-[//]: # (    - Allow unauthenticated invocations)
-
-[//]: # (11. Create Load Balancer &#40;Classic&#41; with Cloud Run as backend.)
 
 ## Optional setup
 1. In Cloud Monitoring, set up alerts for health check failures. You can use the `log_context`.{`origin`,`test`, and `status`} fields to search. Likely, you are looking for `status=="HEALTH_CHECK_FAILED"`
