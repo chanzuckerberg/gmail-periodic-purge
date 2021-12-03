@@ -24,8 +24,7 @@ def health():
 
 @app.route('/cron/daily', methods=['GET'])
 def cron_daily():
-    print("Testing cron")
-    # cron.process_all_users_mail_purge()
+    cron.process_all_users_mail_purge()
     return 'ok'
 
 
