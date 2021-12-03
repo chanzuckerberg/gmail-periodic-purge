@@ -1,11 +1,30 @@
-# from google.oauth2 import service_account
+from google.oauth2 import service_account
 import google.auth
 from googleapiclient.discovery import build
 import logging
 from datetime import date, timedelta
+import os
+from google.cloud import secretmanager
+import functools
+import json
 
 DEFAULT_GOOGLE_API_NUM_RETRIES = 3
 LOG = logging.getLogger(__name__)
+
+
+@functools.lru_cache(maxsize=1)
+def fetch_secret_cached(secret_name):
+    client = secretmanager.SecretManagerServiceClient()
+    response = client.access_secret_version(name=secret_name)
+    service_account_json = response.payload.data.decode("UTF-8")
+    return service_account_json
+
+
+@functools.lru_cache(maxsize=1)
+def fetch_project_id():
+    credentials, project_id = google.auth.default()
+    return project_id
+
 
 def build_credentials(scopes, impersonate=None):
     '''
@@ -15,7 +34,10 @@ def build_credentials(scopes, impersonate=None):
     :return: credential object for use with API service
     '''
 
-    credentials, project_id = google.auth.default(scopes=scopes)
+    project_id = fetch_project_id()
+    secret_name = f"projects/{project_id}/secrets/AUTOMATION_SERVICE_ACCOUNT/versions/latest"
+    service_account_info = json.loads(fetch_secret_cached(secret_name))
+    credentials = service_account.Credentials.from_service_account_info(service_account_info, scopes=scopes)
     if impersonate:
         credentials = credentials.with_subject(impersonate)
     return credentials

@@ -7,7 +7,8 @@
     ```
     https://www.googleapis.com/auth/admin.directory.orgunit,https://www.googleapis.com/auth/admin.directory.user.readonly,https://mail.google.com/
     ```
-6. Create BQ Dataset, and a BQ table with the following Schema
+6. Download Service Account credential, and save to `AUTOMATION_SERVICE_ACCOUNT` in GCP's Secret Manager
+7. Create BQ Dataset, and a BQ table with the following Schema
     ```
     job_id:STRING,
     msg_id:STRING,
@@ -16,14 +17,15 @@
     delete_timestamp:DATETIME,
     commit:BOOLEAN
     ```
-7. Enable Datastore in Native mode with collection `GLOBAL` and blank object with doc ID `CONFIG` 
-8. Deploy to Cloud Run
+8. Enable Datastore in Native mode with collection `GLOBAL` and blank object with doc ID `CONFIG` 
+9. Deploy to Cloud Run
    - Create a Cloud Run Service
    - "Set up with Cloud Build" using Github, Branch=^master$, and Build Type=Dockerfile
    - Cap Autoscaling to 2 instances
    - Under Advanced Settings > Security, set the service account to the one created above.
    - Allow internal traffic and traffic from Cloud Load Balancing
    - Allow unauthenticated invocations
+10. Create Load Balancer (Classic) with Cloud Run as backend.
 
 ## Optional setup
 1. In Cloud Monitoring, set up alerts for health check failures. You can use the `log_context`.{`origin`,`test`, and `status`} fields to search. Likely, you are looking for `status=="HEALTH_CHECK_FAILED"`
