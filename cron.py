@@ -139,3 +139,4 @@ def healthcheck():
     else:
         LOG.info(f'HEALTH_CHECK_PASSED. In the last 24 hours, {recent_deletions_ct} emails were deleted, above the threshold of {config["HEALTHY_DELETIONS_THRESHOLD_PER_DAY"]}', extra=dict(origin='healthcheck', test='HEALTHY_DELETIONS_THRESHOLD_PER_DAY', status='HEALTH_CHECK_PASSED'))
 
+        
