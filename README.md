@@ -1,8 +1,12 @@
+# gmail-periodic-purge
+(Unstable Project) A cron job that will purge old emails from G-mail. Mainly used when there are legal holds placed in Google Workspace Vault.
+
+
 ## Setup
 1. Create GCP project
 2. Create service account in GCP project.
 3. Enable Gmail, Admin SDK, and App Engine Admin API in GCP project
-4. Give service account address BigQuery Editor, BigQuery Job User and Firebase access in GCP IAM.
+4. Give service account address BigQuery Data Editor, BigQuery Job User and Cloud DataStore User in GCP IAM.
 5. Give client ID for service account access to the following scopes under Domain Wide Delegation in the Workspace Admin panel:
     ```
     https://www.googleapis.com/auth/admin.directory.orgunit,https://www.googleapis.com/auth/admin.directory.user.readonly,https://mail.google.com/
@@ -42,17 +46,23 @@ You can of course run & build the Docker container locally. Alternatively, while
 
 ## Future
 - Parallelize for larger workloads
-- More constructive handling of request timeout limits. For example, at the time of writing, Cloud Run caps requests at 1 hour. This isn't strictly an issue, but alternative approaches may be desired. 
-
-## TODO
-- CI/CD -- Keep this in GCP, or use CircleCI. Want one click deploy for code changes. Schema changes can be dealt with manually or by migration scripts, etc.
-- Clean up README
-- Integrate with Pagerduty (post-deploy)
+- More constructive handling of request timeout limits. For example, at the time of writing, Cloud Run caps requests at 1 hour. This isn't strictly an issue, but alternative approaches may be desired.
+- User interface could use some work, namely validation and helpful prompts.
 
 
-DONE:
-- Add dry-run facility
-- Query actual message to get message ID and timestamp
-- Add "debug mode" -- allows for comma separated entry of users to run automation against.
-- Settings page UI -- use bootstrap
-- Structured log entries {user, jobId, message, logLevel}
+## Security
+
+Please note: If you believe you have found a security issue, please responsibly disclose by contacting us at security@chanzuckerberg.com.
+
+
+## Contributing
+
+Contributions and ideas are welcome! Please see [our contributing guide](CONTRIBUTING.md) and don't hesitate to open an issue or send a pull request to improve the functionality of this gem.
+
+This project adheres to the Contributor Covenant [code of conduct](https://github.com/chanzuckerberg/.github/tree/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to opensource@chanzuckerberg.com.
+
+## License
+
+[MIT](https://github.com/chanzuckerberg/sorbet-rails/blob/master/LICENSE)
+
+
