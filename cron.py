@@ -109,7 +109,7 @@ def process_all_users_mail_purge():
         user_ou_id = org_units_by_path.get(user_ou_path, {}).get('orgUnitId')
 
         # find retention period for user
-        user_retention_days = config['RETENTION_OVERRIDES_BY_OU_ID'].get(user_ou_id, config['DEFAULT_RETENTION_DAYS'])
+        user_retention_days = config['RETENTION_OVERRIDES_BY_OU_ID'].get(user_ou_id) or config['DEFAULT_RETENTION_DAYS']
 
         # process user mail deletion
         process_user_mail_purge(job_id, user_email, user_retention_days, config['COMMIT'])
