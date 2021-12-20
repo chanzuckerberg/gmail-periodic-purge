@@ -52,7 +52,7 @@ def settings():
 
     # -- merge in POST data
     if request.method == 'POST':
-        config['BIGQUERY_TABLE_NAME'] = request.form.get('general_bigquery_table_name', '').strip()
+        config['BIGQUERY_TABLE_NAME'] = request.form.get('general_bigquery_table_name', '').strip().replace(':', '.')
         config['ADMIN_USER'] = request.form.get('general_workspace_admin', '').strip()
         config['DEFAULT_RETENTION_DAYS'] = request.form.get('general_default_retention', type=int)
         config['HEALTHY_DELETIONS_THRESHOLD_PER_DAY'] = request.form.get('general_healthy_deletion_threshold', type=int)
