@@ -123,7 +123,7 @@ def list_users(svc):
     return users
 
 
-def list_emails_older_than(svc, older_than_days):
+def list_emails_older_than(svc, older_than_days, log_context=None):
     '''
     :param svc: API service, authorized to read email metadata across domain
     :param older_than_days: integer, find all messages older than (now() minus <older_than_days> days)
@@ -137,12 +137,12 @@ def list_emails_older_than(svc, older_than_days):
     while True:
         results = svc.users().messages().list(pageToken=page_token, userId='me', q=message_query, maxResults=500).execute(num_retries=DEFAULT_GOOGLE_API_NUM_RETRIES)
         emails.extend(results.get('messages', []))
-        LOG.debug("  .. {} emails so far.".format(len(emails)))
+        LOG.debug("  .. {} emails so far.".format(len(emails)), extra=log_context)
         page_token = results.get('nextPageToken', None)
         if not page_token:
             break
 
-    LOG.info("[{}] Found {} total emails in Google Workspace with query: {}".format(svc._impersonate_email, len(emails), message_query))
+    LOG.info("[{}] Found {} total emails in Google Workspace with query: {}".format(svc._impersonate_email, len(emails), message_query), extra=log_context)
 
     return emails
 

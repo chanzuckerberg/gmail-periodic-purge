@@ -25,7 +25,7 @@ def process_user_mail_purge(job_id, user_email, older_than_days, commit=False):
 
     # find all messages older than X.
     LOG.debug(f'{log_line_prefix}[{user_email}] Searching mail older than {older_than_days} days...')
-    old_emails = google_helper.list_emails_older_than(mail_svc, older_than_days)
+    old_emails = google_helper.list_emails_older_than(mail_svc, older_than_days, log_context=log_context)
 
     LOG.debug(f'{log_line_prefix}[{user_email}] Found {len(old_emails)} emails to purge...', extra=log_context)
     # purge each message. TODO: future enhancement - update to batch delete for performance
@@ -134,9 +134,9 @@ def healthcheck():
 
     # if below threshold, throw an error.
     if recent_deletions_ct < config['HEALTHY_DELETIONS_THRESHOLD_PER_DAY']:
-        LOG.error(f'HEALTH_CHECK_FAILED. In the last 24 hours, {recent_deletions_ct} emails were deleted, below the threshold of {config["HEALTHY_DELETIONS_THRESHOLD_PER_DAY"]}', extra=dict(origin='healthcheck', test='HEALTHY_DELETIONS_THRESHOLD_PER_DAY', status='HEALTH_CHECK_FAILED'))
+        LOG.error(f'HEALTH_CHECK_FAILED. In the last 24 hours, {recent_deletions_ct} emails were deleted, below the threshold of {config["HEALTHY_DELETIONS_THRESHOLD_PER_DAY"]}', extra=dict(context=dict(origin='healthcheck', test='HEALTHY_DELETIONS_THRESHOLD_PER_DAY', status='HEALTH_CHECK_FAILED')))
 
     else:
-        LOG.info(f'HEALTH_CHECK_PASSED. In the last 24 hours, {recent_deletions_ct} emails were deleted, above the threshold of {config["HEALTHY_DELETIONS_THRESHOLD_PER_DAY"]}', extra=dict(origin='healthcheck', test='HEALTHY_DELETIONS_THRESHOLD_PER_DAY', status='HEALTH_CHECK_PASSED'))
+        LOG.info(f'HEALTH_CHECK_PASSED. In the last 24 hours, {recent_deletions_ct} emails were deleted, above the threshold of {config["HEALTHY_DELETIONS_THRESHOLD_PER_DAY"]}', extra=dict(context=dict(origin='healthcheck', test='HEALTHY_DELETIONS_THRESHOLD_PER_DAY', status='HEALTH_CHECK_PASSED')))
 
         
