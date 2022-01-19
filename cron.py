@@ -103,16 +103,19 @@ def process_all_users_mail_purge():
     LOG.debug(f'{log_line_prefix}Found {len(org_users)} users to process', extra=log_context)
     for idx, user in enumerate(org_users):
         # grab metadata that is important to us
-        LOG.debug(f'{log_line_prefix}[{idx} of {len(org_users)}] Processing user with metadata {user}', extra=log_context)
-        user_ou_path = user['orgUnitPath']
-        user_email = user['primaryEmail']
-        user_ou_id = org_units_by_path.get(user_ou_path, {}).get('orgUnitId')
+        try:
+            LOG.debug(f'{log_line_prefix}[{idx} of {len(org_users)}] Processing user with metadata {user}', extra=log_context)
+            user_ou_path = user['orgUnitPath']
+            user_email = user['primaryEmail']
+            user_ou_id = org_units_by_path.get(user_ou_path, {}).get('orgUnitId')
 
-        # find retention period for user
-        user_retention_days = config['RETENTION_OVERRIDES_BY_OU_ID'].get(user_ou_id) or config['DEFAULT_RETENTION_DAYS']
+            # find retention period for user
+            user_retention_days = config['RETENTION_OVERRIDES_BY_OU_ID'].get(user_ou_id) or config['DEFAULT_RETENTION_DAYS']
 
-        # process user mail deletion
-        process_user_mail_purge(job_id, user_email, user_retention_days, config['COMMIT'])
+            # process user mail deletion
+            process_user_mail_purge(job_id, user_email, user_retention_days, config['COMMIT'])
+        except Exception as e:
+            LOG.exception(f'NOTIFY_EXCEPTION. Error processing user {user}')
 
     LOG.debug(f'{log_line_prefix}Completed processing {len(org_users)}  users', extra=log_context)
 

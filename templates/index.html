@@ -21,7 +21,16 @@
         <h2>Mail Purge Settings</h2>
         <p class="lead">These settings allow you to fine tune the runtime settings for mail purge.</p>
       </div>
-
+    {% if bad_addresses %}
+    <div class="alert alert-danger" role="alert">
+        The <strong>User Scope</strong> includes the following invalid addresses:
+        <ul>
+            {% for bad_address in bad_addresses %}
+                <li>{{ bad_address }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
       <div class="row">
         <div class="col-md-12 order-md-1">
 

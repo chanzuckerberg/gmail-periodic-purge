@@ -53,6 +53,14 @@ log_name:"/logs/appengine.googleapis.com%2Fstdout"
 jsonPayload.message:"HEALTH_CHECK_FAILED"
 ```
 
+It is also useful to capture certain runtime exceptions. 
+```
+resource.type="gae_app"
+log_name:"/logs/appengine.googleapis.com%2Fstdout"
+jsonPayload.message:"NOTIFY_EXCEPTION"
+```
+
+
 ## Local development
 You can of course run & build the Docker container locally. Alternatively, while perhaps not ideal, you can:
 1. set up a python virtual environment

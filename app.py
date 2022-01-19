@@ -26,8 +26,10 @@ def health():
 
 @app.route('/cron/daily', methods=['GET'])
 def cron_daily():
-    cron.process_all_users_mail_purge()
-    cron.healthcheck()
+    try:
+        cron.process_all_users_mail_purge()
+    finally:
+        cron.healthcheck()
     return 'ok'
 
 
@@ -68,12 +70,19 @@ def settings():
         # normalization generally useful for comparisons
         config['USER_SCOPE'] = list(filter(bool, map(utils.normalize_email, re.split('\n|,|;', request.form.get('general_user_scope') or '')))) or ['all']
 
+        # validate that all addresses are real.
+        verify_addresses = set(list(filter(lambda x: x!='all', config['USER_SCOPE'])))
+        if verify_addresses:
+            # fetch actual users
+            actual_users = google_helper.list_users(org_svc)
+            actual_user_emails = set([utils.normalize_email(u['primaryEmail']) for u in actual_users])
+            bad_addresses = verify_addresses - actual_user_emails
+
         # save to database
         config_helper.set_config(config)
 
     # -- ready to render
     return render_template('index.html', **locals())
-
 
 
 if __name__ == '__main__':
